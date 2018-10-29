@@ -24,9 +24,9 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    //costanti che mi definiscono le soglie di temperatura per l'accensione dei vari led colorati
     private static final float MAX_TEMPERATURE = 28.0f;
     private static final float NORMAL_TEMPERATURE = 24.0f;
-
 
     //Stringhe che mi rappresentano i led red, blue e green
     private final char R = 'R';
