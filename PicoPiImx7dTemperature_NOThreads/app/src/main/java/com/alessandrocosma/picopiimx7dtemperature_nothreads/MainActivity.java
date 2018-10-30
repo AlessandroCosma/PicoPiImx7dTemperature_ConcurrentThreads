@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
 
+        //ottengo un istanza della classe MainActivityViewModel
         mainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
 
         //spengo i led se accesi
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         mainActivityViewModel.setLedLight(G,false);
 
         //apro la connessione con lo Speaker di allarme
+        //N.B. Nel momento in cui apro la connessione, istanzio anche l handler per la gestione dell'allarme
         mainActivityViewModel.openSpeaker();
 
         //inizio ad osservare il ButtonLiveData
