@@ -31,8 +31,7 @@ public class MainActivityViewModel extends ViewModel {
     /** A Handler to play buzzer sound.
      *  It is an asynchronous task but still on the main thread
      */
-    // Init the handler
-    private Handler buzzerSoundHandler = new Handler(Looper.getMainLooper());
+    private Handler buzzerSoundHandler;
 
     public LiveData<Button> getButtonLiveData() {
         if (mButtonLiveData == null)
@@ -53,6 +52,9 @@ public class MainActivityViewModel extends ViewModel {
         if(mSpeaker == null){
             try {
                 mSpeaker = RainbowHat.openPiezo();
+                //Init the handler
+                Log.d(TAG,"Thread:"+Thread.currentThread().getName()+". Sono il thread principale. CREO l'handler per far suonare l'allarme");
+                buzzerSoundHandler = new Handler(Looper.getMainLooper());
             }
             catch (IOException e){
                 Log.e(TAG, "Unable to open the Speaker");
