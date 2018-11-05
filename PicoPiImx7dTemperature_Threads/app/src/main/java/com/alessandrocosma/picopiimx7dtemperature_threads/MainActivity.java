@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     private MainActivityViewModel mainActivityViewModel;
 
-
+    //observer ButtonLiveData
     private final Observer<Button> exitButtonLiveDataObserver = new Observer<Button>(){
         @Override
         public void onChanged(@Nullable Button button){
@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    //observer TemperatureLiveData
     private final Observer<Float> temperatureLiveDataObserver = new Observer<Float>() {
         @Override
         public void onChanged(@Nullable Float temperature) {

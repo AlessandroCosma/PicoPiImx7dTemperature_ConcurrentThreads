@@ -31,7 +31,7 @@ public class MainActivityViewModel extends ViewModel {
 
     /**
      * A Handler to play buzzer sound.
-     *  It is an asynchronous task in a parallel (and background) thread called reportTemperatureThread
+     *  It is an asynchronous task in a parallel (and background) thread called buzzerSoundThread
      */
     private Handler buzzerSoundHandler;
     private HandlerThread buzzerSoundThread;
@@ -85,7 +85,7 @@ public class MainActivityViewModel extends ViewModel {
             Log.d(TAG,"Thread:"+Thread.currentThread().getName()+". Sono il thread principale. CHIUDO l'handler buzzerSoundHandler");
             buzzerSoundHandler.removeCallbacks(playSound);
             Log.d(TAG,"Thread:"+Thread.currentThread().getName()+". Sono il thread principale. CHIUDO il thread buzzerSoundThread");
-            buzzerSoundThread.interrupt();
+            buzzerSoundThread.quitSafely();
 
             try {
                 Log.d(TAG, "Thread:" + Thread.currentThread().getName() + ". Sono il thread principale CHIUDO lo speaker");
