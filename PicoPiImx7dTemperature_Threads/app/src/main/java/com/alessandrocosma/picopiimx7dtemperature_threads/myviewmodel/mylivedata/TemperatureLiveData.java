@@ -31,6 +31,7 @@ public class TemperatureLiveData extends LiveData<Float> {
                 BigDecimal tempBG = new BigDecimal(temperature);
                 tempBG = tempBG.setScale(2, BigDecimal.ROUND_HALF_UP);
                 temperature = (tempBG.floatValue());
+                Log.d(TAG, "Thread:"+Thread.currentThread().getName()+": NOTIFICO la temperatura all'Observer");
                 //notifico il valore all'observer
                 postValue(temperature);
             }
@@ -40,7 +41,8 @@ public class TemperatureLiveData extends LiveData<Float> {
             }
 
             Log.d(TAG,"Thread:"+Thread.currentThread().getName()+". Sono il thread per la lettura della temperatura. Vado in SLEEP ");
-            reportTemperatureHandler.postDelayed(reportTemperature, TimeUnit.SECONDS.toMillis(2));
+            //reportTemperatureHandler.postDelayed(reportTemperature, TimeUnit.SECONDS.toMillis(2));
+            reportTemperatureHandler.postDelayed(reportTemperature, 100);
         }
     };
 
@@ -87,7 +89,7 @@ public class TemperatureLiveData extends LiveData<Float> {
         Log.d(TAG,"Thread:"+Thread.currentThread().getName()+". Sono il thread principale. CHIUDO l'handler reportTemperatureHandler");
         reportTemperatureHandler.removeCallbacks(reportTemperature);
         Log.d(TAG,"Thread:"+Thread.currentThread().getName()+". Sono il thread principale. CHIUDO il thread reportTemperatureThread");
-        reportTemperatureThread.quit();
+        reportTemperatureThread.quitSafely();
 
         try {
             tempSensor.close();

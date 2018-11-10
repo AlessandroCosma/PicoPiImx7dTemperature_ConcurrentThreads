@@ -23,13 +23,15 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     //costanti che mi definiscono le soglie di temperatura per l'accensione dei vari led colorati
-    private static final float MAX_TEMPERATURE = 28.0f;
+    private static final float MAX_TEMPERATURE = 25.0f;
     private static final float NORMAL_TEMPERATURE = 24.0f;
 
     //Stringhe che mi rappresentano i led red, blue e green
     private final char R = 'R';
     private final char B = 'B';
     private final char G = 'G';
+
+    private volatile boolean isTerminated = false;
 
 
     private MainActivityViewModel mainActivityViewModel;
@@ -40,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
         public void onChanged(@Nullable Button button){
 
             if (button != null){
+                isTerminated = true;
+                Log.d(TAG, "E' STATO INVOCATO MainActivity.this.finish()");
                 MainActivity.this.finish();
             }
         }
@@ -49,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
     private final Observer<Float> temperatureLiveDataObserver = new Observer<Float>() {
         @Override
         public void onChanged(@Nullable Float temperature) {
+
+            if(isTerminated)
+                return;
 
             mainActivityViewModel.display(temperature);
 
@@ -64,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 mainActivityViewModel.setLedLight(B,false);
             }
             else {
+                Log.e(TAG, "Thread:"+Thread.currentThread().getName()+" Mi viene segnalata la temperatura di: "+temperature+"°C");
                 mainActivityViewModel.setLedLight(R,true);
                 mainActivityViewModel.setLedLight(G,false);
                 mainActivityViewModel.setLedLight(B,false);

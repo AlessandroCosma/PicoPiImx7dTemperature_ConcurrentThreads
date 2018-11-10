@@ -2,11 +2,9 @@ package com.alessandrocosma.picopiimx7dtemperature_threads.myviewmodel;
 
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.os.HandlerThread;
 import android.util.Log;
 import android.os.Handler;
-import android.os.Looper;
 
 import com.alessandrocosma.picopiimx7dtemperature_threads.myviewmodel.mylivedata.ButtonLiveData;
 import com.alessandrocosma.picopiimx7dtemperature_threads.myviewmodel.mylivedata.TemperatureLiveData;
@@ -28,6 +26,8 @@ public class MainActivityViewModel extends ViewModel {
     private TemperatureLiveData mTemperatureLiveData;
     private AlphanumericDisplay alphanumericDisplay;
     private Speaker mSpeaker;
+
+    private volatile boolean running = false;
 
     /**
      * A Handler to play buzzer sound.
@@ -58,16 +58,18 @@ public class MainActivityViewModel extends ViewModel {
                 mSpeaker = RainbowHat.openPiezo();
 
                 // Init the buzzerSoundThread
-                buzzerSoundThread = new HandlerThread("buzzerSoundThread");
                 Log.d(TAG,"Thread:"+Thread.currentThread().getName()+". Sono il thread principale. CREO buzzerSoundThread");
+                buzzerSoundThread = new HandlerThread("buzzerSoundThread");
+
+                running = true;
 
                 // Start the thread
-                buzzerSoundThread.start();
                 Log.d(TAG,"Thread:"+Thread.currentThread().getName()+". Sono il thread principale. AVVIO buzzerSoundThread");
+                buzzerSoundThread.start();
 
                 //Init the handler
-                buzzerSoundHandler = new Handler(buzzerSoundThread.getLooper());
                 Log.d(TAG, "Thread:" + Thread.currentThread().getName() + ". Sono il thread principale. CREO l'handler per far suonare l'allarme");
+                buzzerSoundHandler = new Handler(buzzerSoundThread.getLooper());
             } catch (IOException e) {
                 Log.e(TAG, "Unable to open the Speaker");
             }
@@ -77,13 +79,15 @@ public class MainActivityViewModel extends ViewModel {
 
     public void closeSpeaker() {
 
+        running = false;
+
         synchronized (mSpeaker){
 
             if (mSpeaker == null)
                 return;
 
             Log.d(TAG,"Thread:"+Thread.currentThread().getName()+". Sono il thread principale. CHIUDO l'handler buzzerSoundHandler");
-            buzzerSoundHandler.removeCallbacks(playSound);
+            buzzerSoundHandler.removeCallbacks(playSoundRunnable);
             Log.d(TAG,"Thread:"+Thread.currentThread().getName()+". Sono il thread principale. CHIUDO il thread buzzerSoundThread");
             buzzerSoundThread.quitSafely();
 
@@ -98,17 +102,21 @@ public class MainActivityViewModel extends ViewModel {
 
     public void playSound() {
         if (mSpeaker == null) {
-            this.openSpeaker();
+            Log.e(TAG, "Speaker not open!");
+            return;
         }
+
         // Start the handler to play buzzer
         Log.d(TAG, "Thread:" + Thread.currentThread().getName() + ". Sono il thread principale. AVVIO l'handler buzzerSoundHandler");
-        buzzerSoundHandler.post(playSound);
+        buzzerSoundHandler.post(playSoundRunnable);
     }
 
 
-    private final Runnable playSound = new Runnable() {
+    private final Runnable playSoundRunnable = new Runnable() {
         @Override
         public void run() {
+            if (!running)
+                return;
             synchronized (mSpeaker){
                 try {
                     Log.d(TAG, "Thread:" + Thread.currentThread().getName() + ". Sono il thread per il suono dell'allarme. ACCENDO l'allarme ");

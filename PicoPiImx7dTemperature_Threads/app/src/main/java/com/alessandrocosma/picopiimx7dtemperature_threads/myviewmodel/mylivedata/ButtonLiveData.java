@@ -30,8 +30,8 @@ public class ButtonLiveData extends LiveData<Button>{
             buttonC.setOnButtonEventListener(new Button.OnButtonEventListener() {
                 @Override
                 public void onButtonEvent(Button button, boolean pressed) {
-                    setValue(buttonC);
                     Log.d(TAG, "button C pressed");
+                    setValue(buttonC);
                 }
             });
         }
