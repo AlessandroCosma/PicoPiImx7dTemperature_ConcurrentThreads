@@ -27,14 +27,16 @@ public class MainActivityViewModel extends ViewModel {
     private AlphanumericDisplay alphanumericDisplay;
     private Speaker mSpeaker;
 
-    private volatile boolean running = false;
+    // variabile che mi notifica quando lo speaker è chiuso o aperto
+    private volatile boolean isSpeakerOpened = false;
+    public static volatile boolean isAlarmPlaying = false;
 
     /**
      * A Handler to play buzzer sound.
      *  It is an asynchronous task in a parallel (and background) thread called buzzerSoundThread
      */
     private Handler buzzerSoundHandler;
-    private HandlerThread buzzerSoundThread;
+    public static HandlerThread buzzerSoundThread;
 
 
     public LiveData<Button> getButtonLiveData() {
@@ -61,7 +63,7 @@ public class MainActivityViewModel extends ViewModel {
                 Log.d(TAG,"Thread:"+Thread.currentThread().getName()+". Sono il thread principale. CREO buzzerSoundThread");
                 buzzerSoundThread = new HandlerThread("buzzerSoundThread");
 
-                running = true;
+                isSpeakerOpened = true;
 
                 // Start the thread
                 Log.d(TAG,"Thread:"+Thread.currentThread().getName()+". Sono il thread principale. AVVIO buzzerSoundThread");
@@ -79,7 +81,11 @@ public class MainActivityViewModel extends ViewModel {
 
     public void closeSpeaker() {
 
-        running = false;
+        isSpeakerOpened = false;
+
+        //chiamo l'interrupt sul buzzerSoundThread nel caso ci fosse l'allarme acceso
+        if(isAlarmPlaying)
+            buzzerSoundThread.interrupt();
 
         synchronized (mSpeaker){
 
@@ -115,18 +121,30 @@ public class MainActivityViewModel extends ViewModel {
     private final Runnable playSoundRunnable = new Runnable() {
         @Override
         public void run() {
-            if (!running)
+            if (!isSpeakerOpened)
                 return;
             synchronized (mSpeaker){
                 try {
                     Log.d(TAG, "Thread:" + Thread.currentThread().getName() + ". Sono il thread per il suono dell'allarme. ACCENDO l'allarme ");
+                    isAlarmPlaying = true;
                     mSpeaker.play(2000);
                     Log.d(TAG, "Thread:" + Thread.currentThread().getName() + ". Sono il thread per il suono dell'allarme. Vado in SLEEP ");
-                    Thread.sleep(1000);
+                    Thread.sleep(4000);
                     Log.d(TAG, "Thread:" + Thread.currentThread().getName() + ". Sono il thread per il suono dell'allarme. SPENGO l'allarme ");
                     mSpeaker.stop();
-                } catch (IOException | InterruptedException | IllegalStateException e) {
-                    Log.e(TAG, "Unable to manage buzzer sound: "+ e.toString());
+                    isAlarmPlaying = false;
+                } catch (IOException  | IllegalStateException e1) {
+                    Log.e(TAG, "Unable to manage buzzer sound: "+ e1.toString());
+                }
+                catch (InterruptedException e2){
+                    Log.d(TAG, "Thread:" + Thread.currentThread().getName() + ". RISVEGLIO PREMATURO. Sono il thread per il suono dell'allarme. SPENGO l'allarme ");
+                    try {
+                        mSpeaker.stop();
+                        isAlarmPlaying = false;
+                    }
+                    catch (IOException e3){
+                        Log.e(TAG, "Unable to manage buzzer sound: "+ e3.toString());
+                    }
                 }
             }
         }
