@@ -41,8 +41,8 @@ public class TemperatureLiveData extends LiveData<Float> {
             }
 
             Log.d(TAG,"Thread:"+Thread.currentThread().getName()+". Sono il thread per la lettura della temperatura. Vado in SLEEP ");
-            reportTemperatureHandler.postDelayed(reportTemperature, TimeUnit.SECONDS.toMillis(2));
-            //reportTemperatureHandler.postDelayed(reportTemperature, 100);
+            //reportTemperatureHandler.postDelayed(reportTemperature, TimeUnit.SECONDS.toMillis(2));
+            reportTemperatureHandler.postDelayed(reportTemperature, 500);
         }
     };
 
