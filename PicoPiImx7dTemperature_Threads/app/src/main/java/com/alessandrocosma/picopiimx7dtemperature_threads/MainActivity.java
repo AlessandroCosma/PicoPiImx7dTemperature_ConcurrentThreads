@@ -33,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
 
     private volatile boolean isTerminated = false;
 
+    //variabile che mi notifica quando la temperatura è sotto la soglia MAX_TEMPERATURE
+    private volatile boolean isTemperatureAccetable = true;
+
 
     private MainActivityViewModel mainActivityViewModel;
 
@@ -60,23 +63,31 @@ public class MainActivity extends AppCompatActivity {
             mainActivityViewModel.display(temperature);
 
             if(temperature < NORMAL_TEMPERATURE){
+                if(!isTemperatureAccetable)
+                    MainActivityViewModel.buzzerSoundThread.interrupt();
+                isTemperatureAccetable = true;
                 mainActivityViewModel.setLedLight(R,false);
                 mainActivityViewModel.setLedLight(G,false);
                 mainActivityViewModel.setLedLight(B,true);
             }
 
             else if(temperature >= NORMAL_TEMPERATURE && temperature < MAX_TEMPERATURE){
+                if(!isTemperatureAccetable)
+                    MainActivityViewModel.buzzerSoundThread.interrupt();
+                isTemperatureAccetable = true;
                 mainActivityViewModel.setLedLight(R,false);
                 mainActivityViewModel.setLedLight(G,true);
                 mainActivityViewModel.setLedLight(B,false);
             }
             else {
-                Log.e(TAG, "Thread:"+Thread.currentThread().getName()+" Mi viene segnalata la temperatura di: "+temperature+"°C");
+                Log.d(TAG, "Thread:"+Thread.currentThread().getName()+" Mi viene segnalata la temperatura di: "+temperature+"°C");
+                isTemperatureAccetable = false;
                 mainActivityViewModel.setLedLight(R,true);
                 mainActivityViewModel.setLedLight(G,false);
                 mainActivityViewModel.setLedLight(B,false);
 
-                mainActivityViewModel.playSound();
+                if(!MainActivityViewModel.isAlarmPlaying)
+                    mainActivityViewModel.playSound();
             }
         }
     };
