@@ -1,8 +1,8 @@
 # PicoPiImx7dTemperature_ConcurrentThreads
-Vengono presentate in seguito 2 varianti dell'applicazione PicoPiImx7dTemperature.
+Two variants of the PicoPiImx7dTemperature application are presented below.
 
-La prima versione, PicoPiImx7d_NOThreads, gestisce il rilevamento della temperatura, l'attivazione dell'allarme in caso di
-superamento della soglia massima e il display con la stampa della temperatura rilevata senza l'ausilio di thread paralleli, ma 
-attraverso un singolo thread suddiviso vari task asincroni.
+The first version, PicoPiImx7d_NOThreads, manages the temperature detection and the activation of the alarm in case of
+exceeding the maximum threshold and prints in the display the temperature detected without the aid of parallel threads, but
+through a single thread divided several asynchronous tasks.
 
-La seconda versione, PicoPiImx7dTemperature_Threads, ripropone le stesse funzionalità, con la differenza che la gestione delle attività e affidata a più thread paralleli.
+The second version, PicoPiImx7dTemperature_Threads, proposes the same functionality, with the difference that task management is entrusted to multiple parallel threads.
