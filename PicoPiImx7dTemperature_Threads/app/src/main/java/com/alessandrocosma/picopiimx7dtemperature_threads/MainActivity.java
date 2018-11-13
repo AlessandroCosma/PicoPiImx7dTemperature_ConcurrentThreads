@@ -6,16 +6,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.util.Log;
-
 import com.alessandrocosma.picopiimx7dtemperature_threads.myviewmodel.MainActivityViewModel;
 import com.google.android.things.contrib.driver.button.Button;
+
 /**
  * A simple application for AndroidThings platform - PICO-PI-IMX7 with RainbowHat.
  * The RainbowHat BMP280 sensor reports the current temperature every 2 seconds
  * and displays it in the segment display.
  * If temperature >= MAX_TEMPERATURE the red led is turned on and the device plays an alarm.
  * If NORMAL_TEMPERATURE <= temperature < MAX_TEMPERATURE the green led is turned on.
- * Otherwise (temperature < 34) blue led is turned on.
+ * Otherwise (temperature < NORMAL_TEMPERATURE) blue led is turned on.
  * N.B. Temperature readings are affected by heat radiated from your Pi’s CPU and the onboard LEDs;
  */
 public class MainActivity extends AppCompatActivity {
