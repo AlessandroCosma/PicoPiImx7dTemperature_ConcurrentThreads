@@ -87,10 +87,10 @@ public class MainActivityViewModel extends ViewModel {
         if(isAlarmPlaying)
             buzzerSoundThread.interrupt();
 
-        synchronized (mSpeaker){
+        if (mSpeaker == null)
+            return;
 
-            if (mSpeaker == null)
-                return;
+        synchronized (mSpeaker){
 
             Log.d(TAG,"Thread:"+Thread.currentThread().getName()+". Sono il thread principale. CHIUDO l'handler buzzerSoundHandler");
             buzzerSoundHandler.removeCallbacks(playSoundRunnable);
