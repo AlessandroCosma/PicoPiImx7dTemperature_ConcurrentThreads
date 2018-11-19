@@ -1,12 +1,9 @@
 package com.alessandrocosma.picopiimx7dtemperature_threads.myviewmodel.mylivedata;
 
-import com.alessandrocosma.picopiimx7dtemperature_threads.MainActivity;
-import com.alessandrocosma.picopiimx7dtemperature_threads.myviewmodel.MainActivityViewModel;
 import com.google.android.things.contrib.driver.button.Button;
 import com.google.android.things.contrib.driver.rainbowhat.RainbowHat;
 
 import android.arch.lifecycle.LiveData;
-import android.content.Context;
 import android.util.Log;
 
 import java.io.IOException;
@@ -43,18 +40,18 @@ public class ButtonLiveData extends LiveData<Button>{
 
     @Override
     protected void onInactive() {
-        super.onInactive();
-        Log.d(TAG, "onInactive");
 
         try {
             buttonC.close();
-
         }
         catch (IOException e){
             Log.e(TAG, "OnInactive: "+e);
         }
 
         setValue(null);
+
+        super.onInactive();
+        Log.d(TAG, "onInactive");
     }
 
 }
