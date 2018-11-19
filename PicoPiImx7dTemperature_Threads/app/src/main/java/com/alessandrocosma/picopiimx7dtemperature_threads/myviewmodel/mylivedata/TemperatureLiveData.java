@@ -21,10 +21,9 @@ public class TemperatureLiveData extends LiveData<Float> {
     private Handler reportTemperatureHandler;
 
     private final Runnable reportTemperature = new Runnable() {
-        float temperature;
-
         @Override
         public void run() {
+            float temperature;
             Log.d(TAG,"Thread:"+Thread.currentThread().getName()+". Sono il thread per la lettura della temperatura. LEGGO la temperatura ");
             try {
                 temperature = tempSensor.readTemperature();
